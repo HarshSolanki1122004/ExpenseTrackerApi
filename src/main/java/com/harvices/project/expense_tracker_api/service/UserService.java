@@ -4,6 +4,7 @@ import com.harvices.project.expense_tracker_api.dto.SignupRequest;
 import com.harvices.project.expense_tracker_api.dto.UserResponse;
 import com.harvices.project.expense_tracker_api.exception.EmailAlreadyTaken;
 import com.harvices.project.expense_tracker_api.exception.EmailOrPasswordNotValid;
+import com.harvices.project.expense_tracker_api.exception.UserNotFound;
 import com.harvices.project.expense_tracker_api.model.User;
 import com.harvices.project.expense_tracker_api.repository.UserRepository;
 import com.harvices.project.expense_tracker_api.security.JwtUtils;
@@ -26,7 +27,7 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
 
-    public void registerUser(SignupRequest signupRequest){
+    public User registerUser(SignupRequest signupRequest){
         if(userRepository.findByEmail(signupRequest.getEmail()).isPresent()){
             throw new EmailAlreadyTaken("Email already in use");
         }
@@ -34,13 +35,21 @@ public class UserService {
         user.setEmail(signupRequest.getEmail());
         user.setUsername(signupRequest.getUsername());
         user.setPassword(encoder.encode(signupRequest.getPassword()));
-        userRepository.save(user);
-
+        return userRepository.save(user);
     }
-    public String loginUser(LoginRequest loginRequest){
+    public UserResponse loginUser(LoginRequest loginRequest){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),loginRequest.getPassword())
         );
-        return jwtUtils.generateToken(loginRequest.getEmail());
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new UserNotFound("User not found"));
+        String token = jwtUtils.generateToken(loginRequest.getEmail());
+
+        return new UserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                token
+        );
     }
 }

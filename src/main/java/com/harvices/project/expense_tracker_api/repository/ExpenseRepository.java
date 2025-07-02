@@ -10,7 +10,10 @@ import java.util.List;
 
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense,Integer> {
-    List<Expense> findByUser(User user);
-    List<Expense> findByUserAndDateBetween(User user, LocalDate startDate,LocalDate endDate);
-    List<Expense> findByUserAndCategory(User user, ExpenseCategory expenseCategory);
+    List<Expense> findByUserAndDateBetweenAndDeletedFalse(User user, LocalDate start, LocalDate end);
+    List<Expense> findByUserAndCategoryAndDeletedFalse(User user, ExpenseCategory category);
+    List<Expense> findByUserAndDeletedFalse(User user);
+
+
+
 }

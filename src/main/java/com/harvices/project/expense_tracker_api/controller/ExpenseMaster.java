@@ -1,4 +1,5 @@
 package com.harvices.project.expense_tracker_api.controller;
+import com.harvices.project.expense_tracker_api.exception.ExpenseDeleted;
 import com.harvices.project.expense_tracker_api.model.Expense;
 import com.harvices.project.expense_tracker_api.model.User;
 import com.harvices.project.expense_tracker_api.model.enums.ExpenseCategory;
@@ -21,17 +22,17 @@ public class ExpenseMaster {
     private final AuthHelper authHelper;
 
     @PostMapping("/createExpense")
-    public ResponseEntity<String> createExpense(@RequestBody @Valid Expense expense){
+    public ResponseEntity<Expense> createExpense(@RequestBody @Valid Expense expense){
         User user = authHelper.getCurrentUser();
-        expenseService.createExpense(expense,user);
-        return ResponseEntity.ok("Expense Added");
+        Expense ex = expenseService.createExpense(expense,user);
+        return ResponseEntity.ok(ex);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateExpense(@PathVariable int id,@RequestBody @Valid Expense expense){
+    public ResponseEntity<Expense> updateExpense(@PathVariable int id,@RequestBody @Valid Expense expense){
         User user = authHelper.getCurrentUser();
-        expenseService.updateExpense(id,expense,user);
-        return ResponseEntity.ok("Expense Updated");
+        Expense ex = expenseService.updateExpense(id,expense,user);
+        return ResponseEntity.ok(ex);
     }
 
     @GetMapping("/allExpense")
@@ -42,10 +43,10 @@ public class ExpenseMaster {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteExpense(@PathVariable int id){
+    public ResponseEntity<Expense> deleteExpense(@PathVariable int id){
         User user = authHelper.getCurrentUser();
-        expenseService.deleteExpense(id,user);
-        return ResponseEntity.ok("Expense Removed");
+        Expense ex = expenseService.deleteExpense(id,user);
+        return ResponseEntity.ok(ex);
     }
     @GetMapping("/filter")
     public ResponseEntity<List<Expense>> filterExpenses(@RequestParam String filter,

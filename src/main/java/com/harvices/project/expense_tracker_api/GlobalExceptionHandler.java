@@ -2,15 +2,27 @@ package com.harvices.project.expense_tracker_api;
 import com.harvices.project.expense_tracker_api.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(EmailAlreadyTaken.class)
     public ResponseEntity<Object> handleEmailAlreadyTaken(EmailAlreadyTaken ex){
@@ -24,6 +36,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFound.class)
     public ResponseEntity<Object> handleUserNotFound(UserNotFound ex){
+        return buildErrorResponse(ex.getMessage(),HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(ExpenseDeleted.class)
+    public ResponseEntity<Object> handleExpenseDeleted(ExpenseDeleted ex){
         return buildErrorResponse(ex.getMessage(),HttpStatus.NOT_FOUND);
     }
 
