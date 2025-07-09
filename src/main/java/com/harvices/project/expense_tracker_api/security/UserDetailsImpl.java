@@ -1,10 +1,12 @@
 package com.harvices.project.expense_tracker_api.security;
 import com.harvices.project.expense_tracker_api.model.User;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
+@Getter
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
@@ -27,7 +29,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
@@ -43,8 +45,5 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-    public User getUser() {
-        return user;
     }
 }

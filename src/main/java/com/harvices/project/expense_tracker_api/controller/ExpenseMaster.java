@@ -1,5 +1,4 @@
 package com.harvices.project.expense_tracker_api.controller;
-import com.harvices.project.expense_tracker_api.exception.ExpenseDeleted;
 import com.harvices.project.expense_tracker_api.model.Expense;
 import com.harvices.project.expense_tracker_api.model.User;
 import com.harvices.project.expense_tracker_api.model.enums.ExpenseCategory;
